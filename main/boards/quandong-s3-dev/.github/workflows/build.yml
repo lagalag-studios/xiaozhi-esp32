@@ -1,0 +1,20 @@
+name: Build Xiaozhi
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: espressif/idf:v5.4.2
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Build firmware
+        shell: bash
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          . $IDF_PATH/export.sh
+          python scripts/release.py BOARD_FOLDER_NAME
+      - uses: actions/upload-artifact@v4
+        with:
+          name: firmware
+          path: releases/*.zip
